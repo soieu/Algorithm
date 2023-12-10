@@ -89,6 +89,47 @@ void find_feed()
 {
     while (1)
     {
+        int distance_map[21][21] = {
+            0,
+        };
+        int visited[21][21] = {
+            0,
+        };
+
+        queue<tuple<int, int, int>> q;
+        q.push({cur_x, cur_y, 0});
+        visited[cur_y][cur_x] = 1;
+        distance_map[cur_y][cur_x] = 0;
+        while (!q.empty())
+        {
+            int temp_cur_x = get<0>(q.front());
+            int temp_cur_y = get<1>(q.front());
+            int temp_cur_sec = get<2>(q.front());
+            q.pop();
+            for (int k = 0; k < 4; k++)
+            {
+                int temp_next_x = temp_cur_x + dir_x[k];
+                int temp_next_y = temp_cur_y + dir_y[k];
+
+                if (temp_next_x < 0 || temp_next_y < 0 || temp_next_x >= n || temp_next_y >= n)
+                {
+                    continue;
+                }
+                if (map[temp_next_y][temp_next_x] > baby_shark_size)
+                {
+                    continue;
+                }
+                if (visited[temp_next_y][temp_next_x] == 1)
+                {
+                    continue;
+                }
+                q.push({temp_next_x, temp_next_y, temp_cur_sec + 1});
+                visited[temp_next_y][temp_next_x] = 1;
+                distance_map[temp_next_y][temp_next_x] = temp_cur_sec + 1;
+            }
+        }
+
+        // 여기서 물고기들 중 가장 작은 거리 찾기
         int min_sec = 0x7fffffff;
         int next_x = 0x7fffffff;
         int next_y = 0x7fffffff;
@@ -97,81 +138,39 @@ void find_feed()
             for (int j = 0; j < feeds[i].size(); j++)
             {
                 auto can_eat_fish = feeds[i][j];
-                queue<tuple<int, int, int>> q; // (x, y, sec)
-                int visited[22][22] = {
-                    0,
-                };
-                q.push({cur_x, cur_y, 0});
 
-                while (!q.empty())
+                if (min_sec == distance_map[can_eat_fish.second][can_eat_fish.first])
                 {
-                    int temp_x = get<0>(q.front());
-                    int temp_y = get<1>(q.front());
-                    int temp_sec = get<2>(q.front());
-                    q.pop();
-                    for (int k = 0; k < 4; k++)
+                    if (next_y == can_eat_fish.second)
                     {
-                        int temp_next_x = temp_x + dir_x[k];
-                        int temp_next_y = temp_y + dir_y[k];
-
-                        // 도착한 경우
-                        if (temp_next_x == can_eat_fish.first && temp_next_y == can_eat_fish.second)
+                        if (next_x > can_eat_fish.first)
                         {
-                            ++temp_sec;
-                            if (min_sec == temp_sec)
-                            {
-                                if (next_y == temp_next_y)
-                                {
-                                    if (next_x > temp_next_x)
-                                    {
-                                        min_sec = temp_sec;
-                                        next_y = temp_next_y;
-                                        next_x = temp_next_x;
-                                        target_size = i;
-                                    }
-                                }
-                                else if (next_y > temp_next_y)
-                                {
-
-                                    min_sec = temp_sec;
-                                    next_y = temp_next_y;
-                                    next_x = temp_next_x;
-                                    target_size = i;
-                                }
-                            }
-                            // 최초의 경우 무조건 여기 걸려서 min_sec 등등 초기화
-                            else if (min_sec > temp_sec)
-                            {
-                                min_sec = temp_sec;
-                                next_x = temp_next_x;
-                                next_y = temp_next_y;
-                                target_size = i;
-                            }
-                            while (!q.empty())
-                            {
-                                q.pop();
-                            }
-                            break;
+                            min_sec = distance_map[can_eat_fish.second][can_eat_fish.first];
+                            next_y = can_eat_fish.second;
+                            next_x = can_eat_fish.first;
+                            target_size = i;
                         }
-                        if (temp_next_x < 0 || temp_next_y < 0 || temp_next_x >= n || temp_next_y >= n)
-                        {
-                            continue;
-                        }
-                        if (map[temp_next_y][temp_next_x] > baby_shark_size)
-                        {
-                            continue;
-                        }
-                        if (visited[temp_next_y][temp_next_x] == 1)
-                        {
-                            continue;
-                        }
-                        q.push({temp_next_x, temp_next_y, temp_sec + 1});
-                        visited[temp_next_y][temp_next_x] = 1;
                     }
+                    else if (next_y > can_eat_fish.second)
+                    {
+
+                        min_sec = distance_map[can_eat_fish.second][can_eat_fish.first];
+                        next_y = can_eat_fish.second;
+                        next_x = can_eat_fish.first;
+                        target_size = i;
+                    }
+                }
+                // 최초의 경우 무조건 여기 걸려서 min_sec 등등 초기화
+                else if (min_sec > distance_map[can_eat_fish.second][can_eat_fish.first] && distance_map[can_eat_fish.second][can_eat_fish.first] != 0)
+                {
+                    min_sec = distance_map[can_eat_fish.second][can_eat_fish.first];
+                    next_x = can_eat_fish.first;
+                    next_y = can_eat_fish.second;
+                    target_size = i;
                 }
             }
         }
-        if (min_sec != 0x7fffffff && cur_x != 0x7fffffff && cur_y != 0x7fffffff)
+        if (min_sec != 0x7fffffff && next_x != 0x7fffffff && next_y != 0x7fffffff)
         {
             cur_x = next_x;
             cur_y = next_y;
