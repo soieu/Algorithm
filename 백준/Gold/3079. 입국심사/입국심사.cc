@@ -54,7 +54,7 @@ int main() {
         cin>>temp;
         v.push_back(temp);
     }
-    sort(v.begin(), v.end());
+    // sort(v.begin(), v.end());
 
     ll left = 1;
     ll right = *max_element(v.begin(), v.end()) * m;
@@ -86,3 +86,5 @@ int main() {
     cout << ans;
     return 0;
 }
+// longlong :           1000000000000000000
+// unsigned longlong :  1000000000000000000
