@@ -16,41 +16,50 @@ int main() {
 
 
     // a의 부분 문자열을 vector에 표시 후 set에 넣기
-    for(int i = 1; i <= a.length(); i++) 
+    for(int last = 1; last <= a.length(); last++) 
     {
-        int last = i;
-        int start = i - 1;
 
-        for(int len = last; len > 0; len--)
+        vector<int> alphabet(26, 0);
+        // 전체 만들고 후에 하나씩 빼기
+        for(int i = 0; i < last;i++)
         {
-            vector<int> alphabet(26, 0);
-            for(int count = 0 ; count < len; count++)
-            {
-                alphabet[a[start-count] - 'a']++;
-            }
+            alphabet[a[i]-'a']++;
+        }
+        alphabet_count.insert(alphabet);
+        for(int i = 0; i < last - 1; i++)
+        {
+            alphabet[a[i]-'a']--;
             alphabet_count.insert(alphabet);
         }
     }
 
     // b의 부분 문자열을 vector에 표시 후 set과 비교
-    for(int i = 1; i <= b.length(); i++) 
+        // b의 부분 문자열을 vector에 표시 후 set과 비교
+    for(int last = 1; last <= b.length(); last++) 
     {
-        int last = i;
-        int start = i - 1;
 
-        for(int len = last; len > 0; len--)
+        vector<int> alphabet(26, 0);
+        // 전체 만들고 후에 하나씩 빼기
+        for(int i = 0; i < last;i++)
         {
-            vector<int> alphabet(26, 0);
-            for(int count = 0 ; count < len; count++)
-            {
-                alphabet[b[start-count] - 'a']++;
-            } 
+            alphabet[b[i]-'a']++;
+        }
+        alphabet_count.count(alphabet);
+        if(alphabet_count.count(alphabet))
+        {
+            result = max(result, last);
+        }
+        for(int i = 0; i < last - 1; i++)
+        {
+            alphabet[b[i]-'a']--;
+            alphabet_count.count(alphabet);
             if(alphabet_count.count(alphabet))
             {
-                result = max(result, len);
+                result = max(result, last - i - 1);
             }
         }
     }
+
 
     cout<<result;
 
