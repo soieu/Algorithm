@@ -2,42 +2,56 @@
 #include <vector>
 using namespace std;
 
-vector<string> words; // 단어 저장
-int maxCount = 0;     // 최대 개수
+vector<string> strs;
+int max_count = 0;
 
 int n, k;
 // a, b, c ...
 
-void backtracking(int index, bool alphabet[], int selectedCount)
+void backtracking(int idx, bool alp[], int alph)
 {
-    if (selectedCount == k)
+    // 사용하는 알파벳들이 결정됐을 때.
+    if (alph == k)
     {
         int count = 0;
-        for (const auto &word : words)
+
+        // 문자 배열
+        for (int i = 0; i < n; i++)
         {
-            bool canRead = true;
-            for (char ch : word)
+            int flag = 0;
+            // 문자열 체크
+            for (int j = 0; j < strs[i].size(); j++)
             {
-                if (!alphabet[ch - 'a'])
+                if (alp[strs[i][j] - 'a'] != 1)
                 {
-                    canRead = false;
+                    flag = 1;
                     break;
                 }
             }
-            if (canRead)
+            if (flag == 0)
+            {
                 count++;
+            }
         }
-        maxCount = max(maxCount, count);
+
+        if (count == n)
+        {
+            cout << count;
+            exit(0);
+        }
+        max_count = max(max_count, count);
         return;
     }
 
-    for (int i = index; i < 26; i++)
+    // alpha 만들기
+
+    for (int j = idx; j < 26; j++)
     {
-        if (!alphabet[i])
+        if (!alp[j])
         {
-            alphabet[i] = true;
-            backtracking(i + 1, alphabet, selectedCount + 1);
-            alphabet[i] = false;
+            alp[j] = true;
+            backtracking(j + 1, alp, alph + 1);
+            alp[j] = false;
         }
     }
 }
@@ -46,14 +60,13 @@ int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-
-    bool alphabet[26] = {false};
-    // 'a', 'n', 't', 'i', 'c'는 항상 포함되어야 함
-    alphabet['a' - 'a'] = alphabet['n' - 'a'] = alphabet['t' - 'a'] = alphabet['i' - 'a'] = alphabet['c' - 'a'] = true;
+    cout.tie(NULL);
+    bool alpha[] = {1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0};
 
     cin >> n >> k;
+
     if (k < 5)
-    { // 최소 5개 알파벳 필요
+    {
         cout << 0;
         return 0;
     }
@@ -62,12 +75,13 @@ int main()
     {
         string temp;
         cin >> temp;
-        words.push_back(temp.substr(4, temp.size() - 8)); // 앞뒤 고정 문자 제거
+        temp = temp.substr(4, temp.size() - 8);
+        strs.push_back(temp);
     }
 
-    backtracking(0, alphabet, 5); // 'a', 'n', 't', 'i', 'c'를 포함하여 시작
+    backtracking(0, alpha, 5);
 
-    cout << maxCount;
+    cout << max_count;
 
     return 0;
 }
