@@ -7,13 +7,12 @@ public class Main {
 
         int n = sc.nextInt();
         int m = sc.nextInt();
-
-        int[] arr = new int[n];
+        
         int[] prefixSum = new int[n];
 
         for(int i = 0; i < n; i++){
-            arr[i] = sc.nextInt();
-            prefixSum[i] = arr[i] + (i == 0 ? 0 : prefixSum[i-1]);
+            int temp = sc.nextInt();
+            prefixSum[i] = temp + (i == 0 ? 0 : prefixSum[i-1]);
 
         }
 
