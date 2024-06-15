@@ -1,24 +1,24 @@
 SELECT
-    ii.ITEM_ID,
-    ii.ITEM_NAME,
-    ii.RARITY
+    ab item_id
+    , item_name
+    , rarity
 FROM
-    ITEM_INFO ii
-WHERE
-    ii.ITEM_ID IN (
+    (
         SELECT
-            it.ITEM_ID
-        FROM 
-            ITEM_TREE it
-        WHERE
-            it.PARENT_ITEM_ID IN (
-                SELECT
-                    iii.ITEM_ID
-                FROM
-                    ITEM_INFO iii
-                WHERE
-                    iii.RARITY = 'RARE'
-            )
-        )
+            it.item_id ab
+        FROM
+                (
+                    SELECT
+                        *
+                    FROM
+                        item_info
+                    WHERE
+                        rarity = "rare"
+                ) ii
+        JOIN item_tree it ON ii.item_id = it.parent_item_id
+    ) iii
+    JOIN item_info iinfo ON iii.ab = iinfo.item_id
 ORDER BY
-    ii.ITEM_ID DESC
+    ab DESC
+
+
