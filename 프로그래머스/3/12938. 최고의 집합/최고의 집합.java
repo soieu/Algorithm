@@ -1,19 +1,21 @@
-import java.util.*;
-
 class Solution {
     public int[] solution(int n, int s) {
-        if (n > s) {
-            return new int[]{-1}; 
+        int[] answer = {};
+        if(n > s) {
+            answer = new int[1];
+            answer[0] = -1;
+            return answer;
+        } else {
+            answer = new int[n];
         }
-        
-        int[] answer = new int[n];
-        
-        int copyN = n;
         for(int i = 0; i < n; i++) {
-            answer[i] = s / copyN--;
-            s -= answer[i];
+            if(i == n-1) {
+                answer[i] = s;
+            } else {
+                answer[i] = s/(n-i);
+                s -= answer[i];
+            }
         }
-        Arrays.sort(answer);
         return answer;
     }
 }
